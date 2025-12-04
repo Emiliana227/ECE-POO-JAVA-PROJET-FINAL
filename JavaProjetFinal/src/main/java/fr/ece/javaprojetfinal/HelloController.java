@@ -1,4 +1,4 @@
-package fr.ece.projet_final_java;
+package fr.ece.javaprojetfinal;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;

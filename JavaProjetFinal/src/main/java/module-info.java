@@ -1,4 +1,4 @@
-module fr.ece.projet_final_java {
+module fr.ece.javaprojetfinal {
     requires javafx.controls;
     requires javafx.fxml;
 
@@ -6,6 +6,6 @@ module fr.ece.projet_final_java {
     requires com.dlsc.formsfx;
     requires org.kordamp.bootstrapfx.core;
 
-    opens fr.ece.projet_final_java to javafx.fxml;
-    exports fr.ece.projet_final_java;
+    opens fr.ece.javaprojetfinal to javafx.fxml;
+    exports fr.ece.javaprojetfinal;
 }
