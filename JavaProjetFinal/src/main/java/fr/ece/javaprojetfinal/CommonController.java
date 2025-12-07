@@ -1,4 +1,3 @@
-// java
 package fr.ece.javaprojetfinal;
 
 import javafx.fxml.FXML;
@@ -10,6 +9,7 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import fr.ece.javaprojetfinal.basics.DBconnect;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -33,7 +33,7 @@ public class CommonController {
             return;
         }
 
-        String query = "SELECT MDP,Role FROM utilisateur WHERE Name = ?";
+        String query = "SELECT * FROM utilisateur WHERE Name = ?";
 
         try (Connection conn = DBconnect.getConnection();
              PreparedStatement ps = conn.prepareStatement(query)) {
@@ -46,7 +46,17 @@ public class CommonController {
                     if (storedPassword != null && storedPassword.equals(password)) {
                         errorMsg.setText("Login successful");
                         if (storedRole == 1) {
-                            // Admin
+                            FXMLLoader loader = new FXMLLoader(getClass().getResource("HomeprojetsAdmin.fxml"));
+                            Parent root = loader.load();
+                            HomeProjetAdmincontroller adminController = loader.getController();
+                            int userid = rs.getInt("ID");
+                            adminController.setUser(userid, username, true);
+
+                            Scene scene = new Scene(root);
+                            Stage stage = (Stage) usernameField.getScene().getWindow();
+                            stage.setTitle("Bienvenue " + username);
+                            stage.setScene(scene);
+                            stage.show();
                         } else if (storedRole == 0) {
                             //User
                         }
