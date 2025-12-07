@@ -1,47 +1,89 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<AnchorPane prefHeight="408.0" prefWidth="624.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.ece.javaprojetfinal.basics.HomeProjetAdmincontroller">
+<AnchorPane prefHeight="465.0" prefWidth="736.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.ece.javaprojetfinal.basics.HomeProjetAdmincontroller">
    <children>
-      <AnchorPane fx:id="usernamespot" layoutX="-20.0" prefHeight="408.0" prefWidth="183.0" style="-fx-background-color: #2043BD;">
+      <AnchorPane fx:id="usernamespot" layoutX="5.0" prefHeight="432.0" prefWidth="166.0" style="-fx-background-color: #354161;">
          <children>
-            <TextField alignment="CENTER" layoutX="19.0" layoutY="14.0" prefHeight="39.0" prefWidth="165.0" promptText="Username" />
-            <VBox layoutX="21.0" layoutY="86.0" prefHeight="224.0" prefWidth="159.0" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="7.0">
+            <TextField fx:id="usernamespot" alignment="CENTER" layoutY="-3.0" prefHeight="56.0" prefWidth="173.0" promptText="Username" />
+            <VBox layoutX="21.0" layoutY="86.0" prefHeight="224.0" prefWidth="159.0" style="-fx-background-color: #354161;" AnchorPane.leftAnchor="21.0" AnchorPane.rightAnchor="7.0">
                <children>
-                  <Button mnemonicParsing="false" prefHeight="40.0" prefWidth="161.0" text="Projets">
+                  <Button fx:id="tachesbtn" mnemonicParsing="false" prefHeight="40.0" prefWidth="161.0" text="Taches ">
                      <font>
                         <Font size="14.0" />
                      </font>
                   </Button>
-                  <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="161.0" text="Taches">
+                  <Button fx:id="projetsbtn" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="161.0" text="Projets">
                      <font>
                         <Font size="14.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
                   </Button>
-                  <Button layoutX="10.0" layoutY="50.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="161.0" text="Utilisateurs">
+                  <Button fx:id="utilisateursbtn" layoutX="10.0" layoutY="50.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="161.0" text="Utilisateurs">
                      <font>
                         <Font size="14.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
                   </Button>
-                  <Button layoutX="10.0" layoutY="90.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="161.0" text="Calendrier">
+                  <Button fx:id="calendrierbtn" layoutX="10.0" layoutY="90.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="161.0" text="Calendrier">
                      <font>
                         <Font size="14.0" />
                      </font>
+                     <VBox.margin>
+                        <Insets top="10.0" />
+                     </VBox.margin>
                   </Button>
                </children>
             </VBox>
-            <Button layoutX="22.0" layoutY="314.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="157.0" text="Deconnexion" />
+            <Button layoutX="12.0" layoutY="368.0" mnemonicParsing="false" prefHeight="39.0" prefWidth="157.0" text="Deconnexion">
+               <font>
+                  <Font size="14.0" />
+               </font></Button>
          </children></AnchorPane>
-      <AnchorPane layoutX="163.0" layoutY="-12.0" prefHeight="66.0" prefWidth="468.0" style="-fx-background-color: #7D90D1;">
+      <AnchorPane layoutX="178.0" prefHeight="56.0" prefWidth="559.0" style="-fx-background-color: #7D90D1;">
          <children>
-            <TextField layoutX="25.0" layoutY="21.0" prefHeight="39.0" prefWidth="283.0" style="-fx-background-color: #7D90D1;" text="Mes projets">
+            <TextField layoutX="27.0" layoutY="10.0" prefHeight="27.0" prefWidth="283.0" style="-fx-background-color: #7D90D1;" text="Mes taches">
                <font>
                   <Font size="18.0" />
                </font>
             </TextField>
+         </children>
+      </AnchorPane>
+      <Label layoutX="234.0" layoutY="75.0" prefHeight="17.0" prefWidth="283.0" text="Vos 4 prochaines taches ">
+         <font>
+            <Font size="18.0" />
+         </font>
+      </Label>
+      <AnchorPane layoutX="453.0" layoutY="118.0" prefHeight="103.0" prefWidth="157.0" style="-fx-background-color: #6181AD;">
+         <children>
+            <TextField fx:id="taskspot2" layoutY="52.0" prefHeight="37.0" prefWidth="157.0" promptText="Tache1" text="tache y" />
+            <TextField fx:id="projetnamespot2" layoutY="14.0" prefHeight="37.0" prefWidth="157.0" promptText="projet x" style="-fx-background-color: #354161;" />
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="234.0" layoutY="118.0" prefHeight="103.0" prefWidth="157.0" style="-fx-background-color: #6181AD;">
+         <children>
+            <TextField fx:id="taskspot1" layoutY="52.0" prefHeight="37.0" prefWidth="157.0" promptText="Tache1" text="tache y" />
+            <TextField fx:id="projetnamespot1" layoutY="14.0" prefHeight="37.0" prefWidth="157.0" promptText="projet x" style="-fx-background-color: #354161;" />
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="234.0" layoutY="263.0" prefHeight="103.0" prefWidth="157.0" style="-fx-background-color: #6181AD;">
+         <children>
+            <TextField fx:id="taskspot3" layoutY="52.0" prefHeight="37.0" prefWidth="157.0" promptText="Tache1" text="tache y" />
+            <TextField fx:id="projetnamespot3" layoutY="14.0" prefHeight="37.0" prefWidth="157.0" promptText="projet x" style="-fx-background-color: #354161;" />
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="459.0" layoutY="263.0" prefHeight="103.0" prefWidth="157.0" style="-fx-background-color: #6181AD;">
+         <children>
+            <TextField fx:id="taskspot4" layoutY="52.0" prefHeight="37.0" prefWidth="157.0" promptText="Tache1" text="tache y" />
+            <TextField fx:id="projetnamespot4" layoutY="14.0" prefHeight="37.0" prefWidth="157.0" promptText="projet x" style="-fx-background-color: #354161;" />
          </children>
       </AnchorPane>
    </children>
