@@ -1,6 +1,7 @@
 module JavaProjetFinal {
     requires javafx.controls;
     requires javafx.fxml;
+    requires java.sql;
 
 
     opens fr.ece.javaprojetfinal to javafx.fxml;

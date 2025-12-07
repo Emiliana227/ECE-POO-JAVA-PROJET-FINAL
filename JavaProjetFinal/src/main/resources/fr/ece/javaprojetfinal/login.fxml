@@ -19,13 +19,13 @@
             <Font size="13.0" />
          </font>
       </Label>
-      <AnchorPane layoutX="47.0" layoutY="146.0" prefHeight="240.0" prefWidth="426.0" style="-fx-background-color: #1C399C;">
+      <AnchorPane layoutX="47.0" layoutY="146.0" prefHeight="240.0" prefWidth="426.0" style="-fx-background-color: #1C399C; -fx-border-radius: 20;">
          <children>
-            <TextField fx:id="username" layoutX="33.0" layoutY="65.0" />
+            <TextField fx:id="username" layoutX="33.0" layoutY="72.0" />
             <Label layoutX="33.0" layoutY="38.0" prefHeight="17.0" prefWidth="149.0" text="Nom d'utilisateur" textFill="#f2ecec" />
             <Label layoutX="33.0" layoutY="119.0" prefHeight="17.0" prefWidth="149.0" text="Mot de passe" textFill="#fdf9f9" />
-            <TextField fx:id="pwd" layoutX="33.0" layoutY="145.0" />
-            <Button layoutX="200.0" layoutY="187.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="149.0" text="Connexion" textFill="#2531b5" />
+            <TextField fx:id="pwd" layoutX="33.0" layoutY="143.0" />
+            <Button layoutX="200.0" layoutY="186.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="149.0" text="Connexion" textFill="#2531b5" />
          </children>
       </AnchorPane>
    </children>
