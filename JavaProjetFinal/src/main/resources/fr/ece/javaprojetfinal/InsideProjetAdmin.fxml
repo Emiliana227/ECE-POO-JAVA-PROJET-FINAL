@@ -54,7 +54,7 @@
                             <font><Font size="14" /></font>
                         </Button>
 
-                        <Button fx:id="utilisateursbtn" mnemonicParsing="false" prefWidth="180" style="-fx-background-radius:8; -fx-background-color: transparent;                                        -fx-text-fill: white; -fx-border-color: rgba(255,255,255,0.12);                                        -fx-border-radius:8; -fx-padding:8 10;" text="Utilisateurs">
+                        <Button fx:id="utilisateursbtn" mnemonicParsing="false" prefWidth="180" style="-fx-background-radius:8; -fx-background-color: transparent;                                        -fx-text-fill: white; -fx-border-color: rgba(255,255,255,0.12);                                        -fx-border-radius:8; -fx-padding:8 10;" text="Collaborateurs">
                             <font><Font size="14" /></font>
                         </Button>
 
