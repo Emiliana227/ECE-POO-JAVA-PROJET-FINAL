@@ -4,7 +4,7 @@ import fr.ece.javaprojetfinal.basics.Projet;
 import fr.ece.javaprojetfinal.basics.ProjetDAO;
 import fr.ece.javaprojetfinal.basics.Tache;
 import javafx.application.Platform;
-import javafx.beans.property.ReadOnlyObjectWrapper;
+import javafx.beans.property.ReadOnlyStringWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -20,9 +20,11 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,30 +57,51 @@ public class InsideProjetAdminController {
     @FXML
     private TableColumn<Tache, String> statusColumn;
 
-    // Button in the FXML
     @FXML
     private Button modifprojet;
 
     private final ObservableList<Tache> taskNames = FXCollections.observableArrayList();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    private final DateTimeFormatter localDateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    // store the current project so modifier can receive it
     private Projet currentProjet;
 
     @FXML
     private void initialize() {
         if (tasksTable != null) {
-            taskNameColumn.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getNom()));
+            // Title / name - try several common getter names
+            taskNameColumn.setCellValueFactory(cell -> {
+                Tache t = cell.getValue();
+                String v = safeGetString(t, new String[]{"getNom", "getTitre", "getTitle", "getName"});
+                return new ReadOnlyStringWrapper(v);
+            });
+
+            // Creation date - try common getters and format both LocalDate and java.util.Date
             creationDateColumn.setCellValueFactory(cell -> {
-                LocalDate d = cell.getValue().getDateCreation();
-                return new ReadOnlyObjectWrapper<>(d != null ? dateFormat.format(d) : "");
+                Tache t = cell.getValue();
+                String v = safeGetDateString(t, new String[]{"getDateCreation", "getCreationDate", "getDateCreated"});
+                return new ReadOnlyStringWrapper(v);
             });
+
+            // Due date / deadline
             dueDateColumn.setCellValueFactory(cell -> {
-                java.util.Date d = cell.getValue().getDateEcheances();
-                return new ReadOnlyObjectWrapper<>(d != null ? dateFormat.format(d) : "");
+                Tache t = cell.getValue();
+                String v = safeGetDateString(t, new String[]{"getDateEcheances", "getDateEcheance", "getDueDate", "getDateDeadline"});
+                return new ReadOnlyStringWrapper(v);
             });
-            ownerColumn.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getOwnerName()));
-            statusColumn.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getStatut()));
+
+            // Owner and status - try common names
+            ownerColumn.setCellValueFactory(cell -> {
+                Tache t = cell.getValue();
+                String v = safeGetString(t, new String[]{"getOwnerName", "getResponsable", "getResponsableName", "getAssignee"});
+                return new ReadOnlyStringWrapper(v);
+            });
+
+            statusColumn.setCellValueFactory(cell -> {
+                Tache t = cell.getValue();
+                String v = safeGetString(t, new String[]{"getStatut", "getStatus", "getEtat"});
+                return new ReadOnlyStringWrapper(v);
+            });
 
             tasksTable.setItems(taskNames);
         }
@@ -87,10 +110,46 @@ public class InsideProjetAdminController {
             collaboratorsList.getItems().clear();
         }
 
-        // wire button action (optional if declared in FXML)
         if (modifprojet != null) {
             modifprojet.setOnAction(e -> openModifierProjet());
         }
+    }
+
+    private String safeGetString(Tache t, String[] getterNames) {
+        if (t == null) return "";
+        for (String g : getterNames) {
+            try {
+                Method m = t.getClass().getMethod(g);
+                Object val = m.invoke(t);
+                if (val != null) return String.valueOf(val);
+            } catch (NoSuchMethodException ignored) {
+            } catch (Exception ex) {
+                System.err.println("Reflection error calling " + g + ": " + ex.getMessage());
+            }
+        }
+        return "";
+    }
+
+    private String safeGetDateString(Tache t, String[] getterNames) {
+        if (t == null) return "";
+        for (String g : getterNames) {
+            try {
+                Method m = t.getClass().getMethod(g);
+                Object val = m.invoke(t);
+                if (val == null) continue;
+                if (val instanceof LocalDate) {
+                    return localDateFormatter.format((LocalDate) val);
+                } else if (val instanceof java.util.Date) {
+                    return dateFormat.format((java.util.Date) val);
+                } else {
+                    return val.toString();
+                }
+            } catch (NoSuchMethodException ignored) {
+            } catch (Exception ex) {
+                System.err.println("Reflection date error calling " + g + ": " + ex.getMessage());
+            }
+        }
+        return "";
     }
 
     public void setProject(Projet projet) {
@@ -111,29 +170,44 @@ public class InsideProjetAdminController {
                 tasks = dao.findTasksByProjetId(projet.getId());
                 responsableName = dao.getResponsableNameByProjetId(projet.getId());
             } catch (SQLException e) {
-                System.err.println("DB error loading project details: " + e.getMessage());
+                System.err.println("DB SQL error loading project details: " + e.getMessage());
+                e.printStackTrace();
+            } catch (Exception e) {
+                System.err.println("Unexpected error loading project details: " + e.getMessage());
+                e.printStackTrace();
             }
 
             if (responsableName == null) responsableName = "";
             for (Tache t : tasks) {
-                t.setOwnerName(responsableName);
+                try {
+                    // best-effort: set owner if setter exists
+                    try {
+                        Method setOwner = t.getClass().getMethod("setOwnerName", String.class);
+                        setOwner.invoke(t, responsableName);
+                    } catch (NoSuchMethodException ignored) {
+                    }
+                } catch (Exception ex) {
+                    System.err.println("Failed to set owner on task: " + ex.getMessage());
+                }
             }
 
             if (collaboratorsList != null) {
                 collaboratorsList.getItems().setAll(collaborators);
             }
+
+            System.out.println("Loaded tasks from DAO: " + (tasks != null ? tasks.size() : 0));
             taskNames.setAll(tasks);
+            System.out.println("Table backing list size: " + taskNames.size());
+
             if (usernameField != null) {
                 usernameField.setText(responsableName);
             }
         });
     }
 
-    // Open the modifier page in the same window (replace Scene)
     private void openModifierProjet() {
         if (currentProjet == null) return;
         try {
-            // find the current stage and current scene to restore later
             Stage stage = null;
             Scene oldScene = null;
             if (projectNameField != null && projectNameField.getScene() != null && projectNameField.getScene().getWindow() instanceof Stage) {
@@ -147,13 +221,12 @@ public class InsideProjetAdminController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/ece/javaprojetfinal/ModifierProjet.fxml"));
             Parent modifierRoot = loader.load();
 
-            // pass references to the modifier controller so it can refresh this view
             Object controllerObj = loader.getController();
             if (controllerObj instanceof fr.ece.javaprojetfinal.ModifierProjetcontroller) {
                 fr.ece.javaprojetfinal.ModifierProjetcontroller controller = (fr.ece.javaprojetfinal.ModifierProjetcontroller) controllerObj;
                 controller.setProject(currentProjet);
                 controller.setPreviousScene(oldScene);
-                controller.setParentController(this); // allow callback to refresh
+                controller.setParentController(this);
             } else {
                 if (controllerObj != null) {
                     try {
@@ -161,7 +234,6 @@ public class InsideProjetAdminController {
                         controllerObj.getClass().getMethod("setPreviousScene", Scene.class).invoke(controllerObj, oldScene);
                         controllerObj.getClass().getMethod("setParentController", InsideProjetAdminController.class).invoke(controllerObj, this);
                     } catch (NoSuchMethodException ignored) {
-                        // controller doesn't expose parent setter; fallback behavior remains
                     } catch (Exception ex) {
                         System.err.println("Failed to set modifier controller references: " + ex.getMessage());
                     }

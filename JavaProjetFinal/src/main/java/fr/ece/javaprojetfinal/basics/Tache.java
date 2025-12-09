@@ -14,13 +14,24 @@ public class Tache {
     private String projetNom;
     private String statut;
     private String priorite;
-
-    // compatibility field used by InsideProjetAdminController
     private String ownerName;
 
     public Tache() {}
 
     public Tache(int id, String nom, String desc, Date dateCreation, Date dateEcheance, int idProjet, String statut, String priorite) {
+        this.id = id;
+        this.nom = nom;
+        this.description = desc;
+        // Convert java.util.Date to LocalDate
+        if (dateCreation != null) {
+            this.dateCreation = dateCreation.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
+        if (dateEcheance != null) {
+            this.dateEcheance = dateEcheance.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        }
+        this.projetId = idProjet;
+        this.statut = statut;
+        this.priorite = priorite;
     }
 
     // getters and setters
@@ -42,26 +53,14 @@ public class Tache {
     public void setStatut(String statut) { this.statut = statut; }
     public String getPriorite() { return priorite; }
     public void setPriorite(String priorite) { this.priorite = priorite; }
-
-    // --- Reintroduced compatibility methods ---
-
-    // Owner name (used by InsideProjetAdminController)
     public String getOwnerName() { return ownerName; }
     public void setOwnerName(String ownerName) { this.ownerName = ownerName; }
 
-    /**
-     * Compatibility accessor returning a java.util.Date for legacy code
-     * that expects Date (InsideProjetAdminController used java.util.Date).
-     */
     public Date getDateEcheances() {
         if (this.dateEcheance == null) return null;
-        // use java.sql.Date which is a subclass of java.util.Date
         return java.sql.Date.valueOf(this.dateEcheance);
     }
 
-    /**
-     * Compatibility setter accepting a java.util.Date and converting to LocalDate.
-     */
     public void setDateEcheances(Date d) {
         if (d == null) {
             this.dateEcheance = null;
