@@ -45,6 +45,10 @@ public class InsideCollabocontroller {
     @FXML
     private Button ajoutertache;
 
+    // wire the "Projets" button present in InsideCollabo.fxml
+    @FXML
+    private javafx.scene.control.Button projetsbtn;
+
     private final ObservableList<Utilisateur> users = FXCollections.observableArrayList();
     private final UtilisateurDAO dao = new UtilisateurDAO();
 
@@ -99,6 +103,41 @@ public class InsideCollabocontroller {
         }
         if (ajoutertache != null) {
             ajoutertache.setOnAction(e -> openAddUserDialog());
+        }
+
+        // wire the projets button to open the projects home (preserve styles if possible)
+        if (projetsbtn != null) {
+            projetsbtn.setOnAction(ev -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/ece/javaprojetfinal/HomeprojetsAdmin.fxml"));
+                    Parent root = loader.load();
+
+                    Stage stage = null;
+                    Scene old = null;
+                    if (projetsbtn.getScene() != null) {
+                        old = projetsbtn.getScene();
+                        if (old.getWindow() instanceof Stage) stage = (Stage) old.getWindow();
+                    }
+
+                    Scene newScene = new Scene(root);
+                    if (old != null) newScene.getStylesheets().addAll(old.getStylesheets());
+
+                    if (stage != null) {
+                        stage.setScene(newScene);
+                        stage.setTitle("Mes projets");
+                        stage.sizeToScene();
+                    } else {
+                        Stage s = new Stage();
+                        s.setScene(newScene);
+                        s.setTitle("Mes projets");
+                        s.show();
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    Alert err = new Alert(Alert.AlertType.ERROR, "Cannot open projects view: " + ex.getMessage(), ButtonType.OK);
+                    err.showAndWait();
+                }
+            });
         }
 
         loadUsers();
@@ -163,9 +202,6 @@ public class InsideCollabocontroller {
         }
     }
 
-
-
-
     private void openAddUserDialog() {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/ece/javaprojetfinal/AjouterUser.fxml"));
@@ -190,6 +226,4 @@ public class InsideCollabocontroller {
             err.showAndWait();
         }
     }
-
-
 }

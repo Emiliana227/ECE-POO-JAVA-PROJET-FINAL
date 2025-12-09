@@ -20,6 +20,7 @@ import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
@@ -33,6 +34,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class InsideProjetAdminController {
+
+    @FXML
+    private BorderPane rootPane; // added to allow replacing center like Home controller
 
     @FXML
     private TextField projectNameField;
@@ -66,6 +70,10 @@ public class InsideProjetAdminController {
 
     @FXML
     private Button modifprojet;
+
+    // new: button in the left navigation to open collaborators view
+    @FXML
+    private Button utilisateursbtn;
 
     private final ObservableList<Tache> taskNames = FXCollections.observableArrayList();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -106,7 +114,6 @@ public class InsideProjetAdminController {
                 return new ReadOnlyStringWrapper(v);
             });
 
-            // Actions column with modify/delete buttons
             if (actionsColumn != null) {
                 actionsColumn.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue()));
                 actionsColumn.setCellFactory(col -> new TableCell<Tache, Tache>() {
@@ -153,8 +160,39 @@ public class InsideProjetAdminController {
         if (modifprojet != null) {
             modifprojet.setOnAction(e -> openModifierProjet());
         }
+
+        // new: wire the "Collaborateurs" button to open InsideCollabo.fxml (like Home controller)
+        if (utilisateursbtn != null) {
+            utilisateursbtn.setOnAction(e -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/ece/javaprojetfinal/InsideCollabo.fxml"));
+                    Parent root = loader.load();
+
+                    Stage stage = null;
+                    Scene old = null;
+                    if (utilisateursbtn.getScene() != null) {
+                        old = utilisateursbtn.getScene();
+                        if (old.getWindow() instanceof Stage) stage = (Stage) old.getWindow();
+                    }
+
+                    Scene newScene = new Scene(root);
+                    if (old != null) newScene.getStylesheets().addAll(old.getStylesheets());
+
+                    if (stage != null) {
+                        stage.setScene(newScene);
+                        stage.setTitle("Collaborateurs");
+                        stage.sizeToScene();
+                    } else if (rootPane != null) {
+                        rootPane.setCenter(root);
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            });
+        }
     }
 
+    // rest of class unchanged...
     private void modifyTask(Tache t) {
         try {
             Stage stage = null;
@@ -194,10 +232,8 @@ public class InsideProjetAdminController {
         }
     }
 
-
     private void deleteTask(Tache t) {
         System.out.println("Delete task: " + t.getNom());
-        // TODO: Implement delete task logic
         taskNames.remove(t);
     }
 

@@ -4,11 +4,14 @@ package fr.ece.javaprojetfinal;
 import fr.ece.javaprojetfinal.basics.Projet;
 import fr.ece.javaprojetfinal.basics.ProjetDAO;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.event.ActionEvent;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -43,6 +46,11 @@ public class ModifierProjetcontroller {
 
     @FXML
     private Button enregistrerBtn;
+    @FXML
+    private javafx.scene.control.Button utilisateursbtn;
+    @FXML
+    private javafx.scene.control.Button projetsbtn;
+
 
     private Projet currentProjet;
     private Scene previousScene;
@@ -97,6 +105,68 @@ public class ModifierProjetcontroller {
         if (retourBtn != null) retourBtn.setOnAction(this::onRetour);
         if (annulerBtn != null) annulerBtn.setOnAction(this::onAnnuler);
         if (enregistrerBtn != null) enregistrerBtn.setOnAction(this::onEnregistrer);
+        if (utilisateursbtn != null) {
+            utilisateursbtn.setOnAction(ev -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/ece/javaprojetfinal/InsideCollabo.fxml"));
+                    Parent root = loader.load();
+
+                    Stage stage = null;
+                    Scene old = null;
+                    if (utilisateursbtn.getScene() != null) {
+                        old = utilisateursbtn.getScene();
+                        if (old.getWindow() instanceof Stage) stage = (Stage) old.getWindow();
+                    }
+
+                    Scene newScene = new Scene(root);
+                    if (old != null) newScene.getStylesheets().addAll(old.getStylesheets());
+
+                    if (stage != null) {
+                        stage.setScene(newScene);
+                        stage.setTitle("Collaborateurs");
+                        stage.sizeToScene();
+                    } else {
+                        Stage s = new Stage();
+                        s.setScene(newScene);
+                        s.setTitle("Collaborateurs");
+                        s.show();
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            });
+        }
+        if (projetsbtn != null) {
+            projetsbtn.setOnAction(ev -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/ece/javaprojetfinal/HomeprojetsAdmin.fxml"));
+                    Parent root = loader.load();
+
+                    Stage stage = null;
+                    Scene old = null;
+                    if (projetsbtn.getScene() != null) {
+                        old = projetsbtn.getScene();
+                        if (old.getWindow() instanceof Stage) stage = (Stage) old.getWindow();
+                    }
+
+                    Scene newScene = new Scene(root);
+                    if (old != null) newScene.getStylesheets().addAll(old.getStylesheets());
+
+                    if (stage != null) {
+                        stage.setScene(newScene);
+                        stage.setTitle("Mes projets");
+                        stage.sizeToScene();
+                    } else {
+                        Stage s = new Stage();
+                        s.setScene(newScene);
+                        s.setTitle("Mes projets");
+                        s.show();
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
+            });
+        }
     }
 
     public void setPreviousScene(Scene scene) {
