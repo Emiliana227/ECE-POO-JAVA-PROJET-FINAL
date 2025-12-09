@@ -7,12 +7,16 @@ import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
@@ -127,47 +131,31 @@ public class InsideCollabocontroller {
     }
 
     private void openModifyDialog(Utilisateur u) {
-        Stage dialog = new Stage();
-        dialog.initModality(Modality.APPLICATION_MODAL);
-        dialog.setTitle("Modifier utilisateur - " + u.getNom());
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/ece/javaprojetfinal/ModifierUser.fxml"));
+            Parent root = loader.load();
+            ModifierUsercontroller ctrl = loader.getController();
+            ctrl.setUser(u);
 
-        TextField nameField = new TextField(u.getNom());
-        TextField addrField = new TextField(u.getAdresse());
-        TextField roleField = new TextField(u.getRole());
-        PasswordField pwdField = new PasswordField();
-        pwdField.setText(u.getMotDePasse());
-
-        Button save = new Button("Enregistrer");
-        Button cancel = new Button("Annuler");
-
-        save.setOnAction(ev -> {
-            u.setNom(nameField.getText());
-            u.setAdresse(addrField.getText());
-            u.setRole(roleField.getText());
-            u.setMotDePasse(pwdField.getText());
-            try {
-                dao.update(u);
-                tasksTable.refresh();
-            } catch (Exception ex) {
-                ex.printStackTrace();
-                Alert err = new Alert(Alert.AlertType.ERROR, "Update failed: " + ex.getMessage(), ButtonType.OK);
-                err.showAndWait();
+            Stage dialog = new Stage();
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.setTitle("Modifier utilisateur - " + u.getNom());
+            Scene scene = new Scene(root);
+            // preserve styles from current table scene if possible
+            if (tasksTable != null && tasksTable.getScene() != null) {
+                scene.getStylesheets().addAll(tasksTable.getScene().getStylesheets());
             }
-            dialog.close();
-        });
+            dialog.setScene(scene);
+            dialog.sizeToScene();
+            dialog.showAndWait();
 
-        cancel.setOnAction(ev -> dialog.close());
-
-        VBox content = new VBox(8,
-                new Label("Nom"), nameField,
-                new Label("Adresse"), addrField,
-                new Label("Rôle (Admin/User)"), roleField,
-                new Label("Mot de passe"), pwdField,
-                new HBox(8, save, cancel)
-        );
-        content.setStyle("-fx-padding:12; -fx-background-color:white;");
-        dialog.setScene(new javafx.scene.Scene(content));
-        dialog.sizeToScene();
-        dialog.showAndWait();
+            // refresh table after dialog closes
+            tasksTable.refresh();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            Alert err = new Alert(Alert.AlertType.ERROR, "Cannot open modifier window: " + ex.getMessage(), ButtonType.OK);
+            err.showAndWait();
+        }
     }
+
 }

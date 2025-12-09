@@ -75,7 +75,7 @@
                     <TableColumn fx:id="ownerColumn" prefWidth="160" text="Mot de passe" />
 
                     <!-- Nouvelle colonne Modifier (bouton ajouté côté Java) -->
-                    <TableColumn fx:id="editColumn" prefWidth="120" text="Modifier" />
+                    <TableColumn fx:id="editColumn" prefWidth="180" text="Modifier" />
 
                 </columns>
 
