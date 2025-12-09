@@ -11,9 +11,6 @@
             fx:controller="fr.ece.javaprojetfinal.HomeProjetAdmincontroller"
             prefWidth="900" prefHeight="560">
 
-
-
-
     <!-- Header -->
     <top>
         <HBox spacing="12" alignment="CENTER_LEFT" style="-fx-padding:12;  -fx-background-color: linear-gradient(to right, #4b6cb7, #182848);">
@@ -70,7 +67,8 @@
 
                 <Region VBox.vgrow="ALWAYS" />
 
-                <Button text="Paramètres" prefWidth="180" style="-fx-background-radius:8; -fx-background-color: rgba(255,255,255,0.06); -fx-text-fill: white; -fx-padding:8 10;" />
+                <!-- Added fx:id to allow controller wiring -->
+                <Button fx:id="parametresbtn" text="Paramètres" prefWidth="180" style="-fx-background-radius:8; -fx-background-color: rgba(255,255,255,0.06); -fx-text-fill: white; -fx-padding:8 10;" />
             </children>
         </VBox>
     </left>

@@ -2,12 +2,14 @@ package fr.ece.javaprojetfinal;
 
 import fr.ece.javaprojetfinal.basics.Projet;
 import fr.ece.javaprojetfinal.basics.ProjetDAO;
+import fr.ece.javaprojetfinal.basics.SettingsLauncher;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectWrapper;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -22,28 +24,24 @@ import java.util.List;
 
 public class HomeProjetAdmincontroller {
     @FXML
-    private BorderPane rootPane; // top-level BorderPane
-
+    private BorderPane rootPane;
     @FXML
     private Label usernameSpot;
-
     @FXML
     private TableView<Projet> projectsTable;
-
     @FXML
     private TableColumn<Projet, String> nameCol;
-
     @FXML
     private TableColumn<Projet, String> descCol;
-
     @FXML
     private TableColumn<Projet, Projet> actionsCol;
-
-    // Sidebar button (wired in FXML)
     @FXML
     private javafx.scene.control.Button utilisateursbtn;
+    @FXML
+    private javafx.scene.control.Button parametresbtn;
 
     private final ObservableList<Projet> projects = FXCollections.observableArrayList();
+    private int loggedInUserId = -1;
 
     public void setUser(int userId, String username, boolean isAdmin) {
         if (usernameSpot != null) {
@@ -77,31 +75,24 @@ public class HomeProjetAdmincontroller {
     private void initialize() {
         if (projectsTable != null) {
             projectsTable.setPlaceholder(new Label("Aucun projet pour cet utilisateur"));
-
             nameCol.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getNom()));
             descCol.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().getDescription()));
-
             actionsCol.setCellValueFactory(col -> new ReadOnlyObjectWrapper<>(col.getValue()));
             actionsCol.setCellFactory(col -> new ActionsCell(this));
-
             projectsTable.setItems(projects);
         }
 
-        // wire utilisateursbtn to open InsideCollabo.fxml
         if (utilisateursbtn != null) {
             utilisateursbtn.setOnAction(ev -> {
                 try {
                     FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/ece/javaprojetfinal/InsideCollabo.fxml"));
                     Parent root = loader.load();
 
-                    // attempt to find the current stage
                     Stage stage = null;
                     Scene old = null;
                     if (utilisateursbtn.getScene() != null) {
                         old = utilisateursbtn.getScene();
-                        if (old.getWindow() instanceof Stage) {
-                            stage = (Stage) old.getWindow();
-                        }
+                        if (old.getWindow() instanceof Stage) stage = (Stage) old.getWindow();
                     }
 
                     Scene newScene = new Scene(root);
@@ -112,7 +103,6 @@ public class HomeProjetAdmincontroller {
                         stage.setTitle("Collaborateurs");
                         stage.sizeToScene();
                     } else if (rootPane != null) {
-                        // fallback: replace center of current BorderPane
                         rootPane.setCenter(root);
                     }
                 } catch (IOException ex) {
@@ -120,9 +110,25 @@ public class HomeProjetAdmincontroller {
                 }
             });
         }
+
+        // do NOT set parametresbtn handler here with a hardcoded id.
+        // Handler will be set when the real loggedInUserId is injected via setLoggedInUserId(...)
     }
 
+    /**
+     * Must be called after FXMLLoader.load() from the login flow.
+     * Installs the Paramètres button handler with the correct user id.
+     */
+    public void setLoggedInUserId(int userId) {
+        this.loggedInUserId = userId;
+        if (parametresbtn != null) {
+            parametresbtn.setOnAction(ev -> {
+                SettingsLauncher.openParametresForUser(this.loggedInUserId, (Node) parametresbtn);
+            });
+        }
+    }
 
+    // remaining methods unchanged (openProject, deleteProject)...
     public void openProject(Projet projet) {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/ece/javaprojetfinal/InsideProjetAdmin.fxml"));
@@ -131,7 +137,6 @@ public class HomeProjetAdmincontroller {
             InsideProjetAdminController insideController = loader.getController();
             insideController.setProject(projet);
 
-            // try to get the current Stage from a UI node (projectsTable)
             Stage currentStage = null;
             if (projectsTable != null && projectsTable.getScene() != null && projectsTable.getScene().getWindow() instanceof Stage) {
                 currentStage = (Stage) projectsTable.getScene().getWindow();
@@ -140,18 +145,13 @@ public class HomeProjetAdmincontroller {
             if (currentStage != null) {
                 Scene oldScene = projectsTable.getScene();
                 Scene newScene = new Scene(insideRoot);
-                // preserve stylesheets from the old scene if present
-                if (oldScene != null) {
-                    newScene.getStylesheets().addAll(oldScene.getStylesheets());
-                }
+                if (oldScene != null) newScene.getStylesheets().addAll(oldScene.getStylesheets());
                 currentStage.setScene(newScene);
                 currentStage.setTitle("Projet - " + projet.getNom());
                 currentStage.sizeToScene();
             } else if (rootPane != null) {
-                // fallback: replace center of current BorderPane
                 rootPane.setCenter(insideRoot);
             } else {
-                // last-resort: open a new window (shouldn't happen for usual usage)
                 Stage stage = new Stage();
                 stage.setScene(new Scene(insideRoot));
                 stage.setTitle("Projet - " + projet.getNom());
@@ -161,7 +161,6 @@ public class HomeProjetAdmincontroller {
             e.printStackTrace();
         }
     }
-
 
     public void deleteProject(Projet projet) {
         ProjetDAO dao = new ProjetDAO();

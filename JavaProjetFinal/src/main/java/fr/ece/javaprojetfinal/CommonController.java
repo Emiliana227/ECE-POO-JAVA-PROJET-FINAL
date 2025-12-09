@@ -51,6 +51,7 @@ public class CommonController {
                             FXMLLoader loader = new FXMLLoader(getClass().getResource("HomeprojetsAdmin.fxml"));
                             Parent root = loader.load();
                             HomeProjetAdmincontroller adminController = loader.getController();
+                            adminController.setLoggedInUserId(userid);
                             adminController.setUser(userid, username, true);
 
                             Scene scene = new Scene(root);
