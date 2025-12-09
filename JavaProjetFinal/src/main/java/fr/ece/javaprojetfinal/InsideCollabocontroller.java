@@ -42,6 +42,8 @@ public class InsideCollabocontroller {
 
     @FXML
     private TableColumn<Utilisateur, Utilisateur> editColumn;
+    @FXML
+    private Button ajoutertache;
 
     private final ObservableList<Utilisateur> users = FXCollections.observableArrayList();
     private final UtilisateurDAO dao = new UtilisateurDAO();
@@ -94,6 +96,9 @@ public class InsideCollabocontroller {
             });
 
             tasksTable.setItems(users);
+        }
+        if (ajoutertache != null) {
+            ajoutertache.setOnAction(e -> openAddUserDialog());
         }
 
         loadUsers();
@@ -157,5 +162,34 @@ public class InsideCollabocontroller {
             err.showAndWait();
         }
     }
+
+
+
+
+    private void openAddUserDialog() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/ece/javaprojetfinal/AjouterUser.fxml"));
+            Parent root = loader.load();
+
+            Stage dialog = new Stage();
+            dialog.initModality(Modality.APPLICATION_MODAL);
+            dialog.setTitle("Ajouter un collaborateur");
+            Scene scene = new Scene(root);
+            if (tasksTable != null && tasksTable.getScene() != null) {
+                scene.getStylesheets().addAll(tasksTable.getScene().getStylesheets());
+            }
+            dialog.setScene(scene);
+            dialog.sizeToScene();
+            dialog.showAndWait();
+
+            // refresh table after dialog closes
+            loadUsers();
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            Alert err = new Alert(Alert.AlertType.ERROR, "Cannot open add user window: " + ex.getMessage(), ButtonType.OK);
+            err.showAndWait();
+        }
+    }
+
 
 }

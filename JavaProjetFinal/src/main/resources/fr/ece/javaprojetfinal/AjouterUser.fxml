@@ -5,7 +5,7 @@
 <?import javafx.scene.shape.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="560" prefWidth="900" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.ece.javaprojetfinal.ModifierProjetcontroller">
+<BorderPane prefHeight="560" prefWidth="900" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="fr.ece.javaprojetfinal.AjouterUsercontroller">
 
     <!-- HEADER -->
     <top>
@@ -73,19 +73,19 @@
                 <!-- NOM -->
                 <VBox spacing="6">
                     <Label style="-fx-text-fill:#1f2b59; -fx-font-weight:bold;" text="Nom du collaborateur" />
-                    <TextField fx:id="nomField" editable="false" prefHeight="33" style="-fx-background-color:#e6e6e6;                                       -fx-background-radius:8; -fx-padding:8;" />
+                    <TextField fx:id="nomField" prefHeight="33" style="-fx-background-color:#e6e6e6;                                       -fx-background-radius:8; -fx-padding:8;" />
                 </VBox>
 
                 <!-- ADRESSE -->
                 <VBox spacing="6">
                     <Label style="-fx-text-fill:#1f2b59; -fx-font-weight:bold;" text="Adresse du collaborateur" />
-                    <TextField fx:id="adresseField" editable="false" prefHeight="33" style="-fx-background-color:#e6e6e6;                                       -fx-background-radius:8; -fx-padding:8;" />
+                    <TextField fx:id="adresseField" prefHeight="33" style="-fx-background-color:#e6e6e6;                                       -fx-background-radius:8; -fx-padding:8;" />
                 </VBox>
 
                 <!-- PASSWORD -->
                 <VBox spacing="6">
                     <Label style="-fx-text-fill:#1f2b59; -fx-font-weight:bold;" text="Mot de passe du collaborateur" />
-                    <TextField fx:id="passwordField" editable="false" prefHeight="33" style="-fx-background-color:#e6e6e6;                                       -fx-background-radius:8; -fx-padding:8;" />
+                    <TextField fx:id="passwordField"  prefHeight="33" style="-fx-background-color:#e6e6e6;                                       -fx-background-radius:8; -fx-padding:8;" />
                 </VBox>
 
                 <!-- ROLE -->

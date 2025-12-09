@@ -55,4 +55,17 @@ public class UtilisateurDAO {
             ps.executeUpdate();
         }
     }
+    public void insert(Utilisateur u) throws SQLException {
+        String sql = "INSERT INTO utilisateur (Name, Address, Role, MDP) VALUES (?, ?, ?, ?)";
+        try (Connection c = DBconnect.getConnection();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, u.getNom());
+            ps.setString(2, u.getAdresse());
+            int roleInt = "Admin".equalsIgnoreCase(u.getRole()) ? 1 : 0;
+            ps.setInt(3, roleInt);
+            ps.setString(4, u.getMotDePasse());
+            ps.executeUpdate();
+        }
+    }
+
 }
