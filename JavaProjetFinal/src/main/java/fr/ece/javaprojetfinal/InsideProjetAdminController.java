@@ -13,13 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TableCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
@@ -74,6 +68,12 @@ public class InsideProjetAdminController {
     // new: button in the left navigation to open collaborators view
     @FXML
     private Button utilisateursbtn;
+
+    @FXML
+    private Button projetsbtn;
+
+    @FXML
+    private Button calendrierbtn;
 
     private final ObservableList<Tache> taskNames = FXCollections.observableArrayList();
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -190,6 +190,71 @@ public class InsideProjetAdminController {
                 }
             });
         }
+        // wire the "Projets" button to open HomeprojetsAdmin.fxml (like Home controller)
+        if (projetsbtn != null) {
+            projetsbtn.setOnAction(ev -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/ece/javaprojetfinal/HomeprojetsAdmin.fxml"));
+                    Parent root = loader.load();
+                    HomeProjetAdmincontroller adminController = loader.getController();
+                    adminController.setLoggedInUserId(1);
+                    adminController.setUser(1, "Admin", true);
+
+                    Stage stage = null;
+                    Scene old = null;
+                    if (projetsbtn.getScene() != null) {
+                        old = projetsbtn.getScene();
+                        if (old.getWindow() instanceof Stage) stage = (Stage) old.getWindow();
+                    }
+
+                    Scene newScene = new Scene(root);
+                    if (old != null) newScene.getStylesheets().addAll(old.getStylesheets());
+
+                    if (stage != null) {
+                        stage.setScene(newScene);
+                        stage.setTitle("Mes projets");
+                        stage.sizeToScene();
+                    } else {
+                        Stage s = new Stage();
+                        s.setScene(newScene);
+                        s.setTitle("Mes projets");
+                        s.show();
+                    }
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                    System.err.println("Cannot open projects view: " + ex.getMessage());
+                }
+            });
+        }
+        if (calendrierbtn != null) {
+            calendrierbtn.setOnAction(ev -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/ece/javaprojetfinal/Calendar.fxml"));
+                    Parent root = loader.load();
+
+                    Scene newScene = new Scene(root, 1000, 700);
+
+                    // preserve stylesheets from the current scene if present
+                    Scene oldScene = calendrierbtn.getScene();
+                    if (oldScene != null) {
+                        newScene.getStylesheets().addAll(oldScene.getStylesheets());
+                    }
+
+                    // Always open in a separate window (new Stage)
+                    Stage calendarStage = new Stage();
+                    calendarStage.setTitle("Mon Calendrier");
+                    calendarStage.setScene(newScene);
+                    calendarStage.sizeToScene();
+                    calendarStage.show();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Alert err = new Alert(Alert.AlertType.ERROR, "Cannot open calendar: " + e.getMessage(), ButtonType.OK);
+                    err.showAndWait();
+                }
+            });
+        }
+
     }
 
     // rest of class unchanged...

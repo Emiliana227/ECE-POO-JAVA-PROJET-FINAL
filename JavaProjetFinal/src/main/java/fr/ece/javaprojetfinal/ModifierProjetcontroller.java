@@ -50,6 +50,8 @@ public class ModifierProjetcontroller {
     private javafx.scene.control.Button utilisateursbtn;
     @FXML
     private javafx.scene.control.Button projetsbtn;
+    @FXML
+    private javafx.scene.control.Button calendrierbtn;
 
 
     private Projet currentProjet;
@@ -139,8 +141,11 @@ public class ModifierProjetcontroller {
         if (projetsbtn != null) {
             projetsbtn.setOnAction(ev -> {
                 try {
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/ece/javaprojetfinal/HomeprojetsAdmin.fxml"));
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("HomeprojetsAdmin.fxml"));
                     Parent root = loader.load();
+                    HomeProjetAdmincontroller adminController = loader.getController();
+                    adminController.setLoggedInUserId(1);
+                    adminController.setUser(1, "Admin", true);
 
                     Stage stage = null;
                     Scene old = null;
@@ -167,6 +172,35 @@ public class ModifierProjetcontroller {
                 }
             });
         }
+        if (calendrierbtn != null) {
+            calendrierbtn.setOnAction(ev -> {
+                try {
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/fr/ece/javaprojetfinal/Calendar.fxml"));
+                    Parent root = loader.load();
+
+                    Scene newScene = new Scene(root, 1000, 700);
+
+                    // preserve stylesheets from the current scene if present
+                    Scene oldScene = calendrierbtn.getScene();
+                    if (oldScene != null) {
+                        newScene.getStylesheets().addAll(oldScene.getStylesheets());
+                    }
+
+                    // Always open in a separate window (new Stage)
+                    Stage calendarStage = new Stage();
+                    calendarStage.setTitle("Mon Calendrier");
+                    calendarStage.setScene(newScene);
+                    calendarStage.sizeToScene();
+                    calendarStage.show();
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Alert err = new Alert(Alert.AlertType.ERROR, "Cannot open calendar: " + e.getMessage(), ButtonType.OK);
+                    err.showAndWait();
+                }
+            });
+        }
+
     }
 
     public void setPreviousScene(Scene scene) {
