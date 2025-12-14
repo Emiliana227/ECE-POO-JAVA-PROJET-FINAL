@@ -88,32 +88,21 @@ public class ModifierUsercontroller extends BaseController {
 
         try {
             dao.update(user);
-
-            Alert ok = new Alert(Alert.AlertType.INFORMATION);
-            ok.setHeaderText(null);
-            ok.setContentText("Utilisateur modifié avec succès.");
-            ok.showAndWait();
-
             closeWindow();
-
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
             ex.printStackTrace();
-            showError("Erreur lors de l'enregistrement.");
+            Alert err = new Alert(Alert.AlertType.ERROR, "Failed to save user: " + ex.getMessage(), ButtonType.OK);
+            err.showAndWait();
         }
     }
 
-    // ======================
-    // UTILS
-    // ======================
     private void closeWindow() {
-        Stage stage = (Stage) enregistrerBtn.getScene().getWindow();
-        stage.close();
-    }
-    private void showError(String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle("Erreur");
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
+        Stage s = null;
+        if (enregistrerBtn != null && enregistrerBtn.getScene() != null) {
+            s = (Stage) enregistrerBtn.getScene().getWindow();
+        } else if (annulerBtn != null && annulerBtn.getScene() != null) {
+            s = (Stage) annulerBtn.getScene().getWindow();
+        }
+        if (s != null) s.close();
     }
 }
