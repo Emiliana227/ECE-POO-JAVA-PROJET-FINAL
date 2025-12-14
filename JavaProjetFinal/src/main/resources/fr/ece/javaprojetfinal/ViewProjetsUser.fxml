@@ -8,7 +8,7 @@
 
 <VBox xmlns="http://javafx.com/javafx/17.0.12"
       xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="fr.ece.javaprojetfinal.HomeProjetAdmincontroller"
+      fx:controller="fr.ece.javaprojetfinal.ViewProjectUsercontroller"
       spacing="0">
 
     <!-- ESPACE POUR BOUTONS WINDOWS -->

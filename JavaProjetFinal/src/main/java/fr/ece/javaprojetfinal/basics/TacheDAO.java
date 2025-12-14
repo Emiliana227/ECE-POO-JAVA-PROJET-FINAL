@@ -58,9 +58,9 @@ public class TacheDAO {
     }
 
     public void update(Tache tache) throws SQLException {
-        // adapte les noms de colonnes à ta base (date\_echeance / Date\_echeances, owner\_name, etc.)
+        // Update only columns that actually exist in the 'taches' table
         String sql = "UPDATE taches " +
-                "SET Nom = ?, Description = ?, Date_echeances = ?, Statut = ?, Priorite = ?, owner_name = ? " +
+                "SET Nom = ?, Description = ?, Date_echeances = ?, Statut = ?, Priorite = ? " +
                 "WHERE ID = ?";
 
         try (Connection conn = DBconnect.getConnection();
@@ -72,15 +72,49 @@ public class TacheDAO {
             if (tache.getDateEcheance() != null) {
                 ps.setDate(3, Date.valueOf(tache.getDateEcheance()));
             } else {
-                ps.setDate(3, null);
+                ps.setNull(3, java.sql.Types.DATE);
             }
 
             ps.setString(4, tache.getStatut());
             ps.setString(5, tache.getPriorite());
-            ps.setString(6, tache.getOwnerName()); // ou null si pas utilisé
-            ps.setInt(7, tache.getId());
+            ps.setInt(6, tache.getId());
 
             ps.executeUpdate();
+        }
+    }
+
+    // New insert method to create a task
+    public void insert(Tache tache) throws SQLException {
+        String sql = "INSERT INTO taches (Nom, Description, Date_creation, Date_echeances, Id_projet, Statut, Priorite) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = DBconnect.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql, PreparedStatement.RETURN_GENERATED_KEYS)) {
+
+            ps.setString(1, tache.getNom());
+            ps.setString(2, tache.getDescription());
+
+            if (tache.getDateCreation() != null) {
+                ps.setDate(3, Date.valueOf(tache.getDateCreation()));
+            } else {
+                ps.setDate(3, new Date(System.currentTimeMillis())); // default to now
+            }
+
+            if (tache.getDateEcheance() != null) {
+                ps.setDate(4, Date.valueOf(tache.getDateEcheance()));
+            } else {
+                ps.setNull(4, java.sql.Types.DATE);
+            }
+
+            ps.setInt(5, tache.getProjetId());
+            ps.setString(6, tache.getStatut() != null ? tache.getStatut() : "À faire");
+            ps.setString(7, tache.getPriorite() != null ? tache.getPriorite() : "Moyenne");
+
+            ps.executeUpdate();
+
+            try (ResultSet keys = ps.getGeneratedKeys()) {
+                if (keys.next()) {
+                    tache.setId(keys.getInt(1));
+                }
+            }
         }
     }
 }

@@ -20,17 +20,17 @@ public abstract class BaseController {
     // Initialisation de la session (à appeler dans initialize() des enfants)
     public void initializeSession() {
         Session session = Session.getInstance();
-
-        if (!session.isLoggedIn()) {
-            showErrorAndExit("Session expirée. Veuillez vous reconnecter.");
-            return;
-        }
+//TODO faire marcher ca
+//        if (!session.isLoggedIn()) {
+//            showErrorAndExit("Session expirée. Veuillez vous reconnecter.");
+//            return;
+//        }
 
         // Vérification des permissions selon le type de page
-        if (!checkPagePermissions()) {
-            showErrorAndExit("Vous n'avez pas accès à cette page.");
-            return;
-        }
+//        if (!checkPagePermissions()) {
+//            showErrorAndExit("Vous n'avez pas accès à cette page.");
+//            return;
+//        }
 
         // Affichage des informations utilisateur
         String username = session.getUsername();

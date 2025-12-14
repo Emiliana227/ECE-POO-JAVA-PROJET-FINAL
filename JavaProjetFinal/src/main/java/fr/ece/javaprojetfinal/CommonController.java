@@ -5,6 +5,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
@@ -16,6 +17,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+
+import static fr.ece.javaprojetfinal.PasswordUtils.verifyPassword;
 
 public class CommonController {
     @FXML
@@ -53,15 +56,16 @@ public class CommonController {
                 if (rs.next()) {
                     String storedPassword = rs.getString("MDP");
                     int storedRole = rs.getInt("Role");
-                    if (storedPassword != null && storedPassword.equals(password)) {
+                    if (storedPassword != null && verifyPassword(password, storedPassword)) {
                         errorMsg.setText("Login successful");
                         int userid = rs.getInt("ID");
                         if (storedRole == 1) {
                             FXMLLoader loader = new FXMLLoader(getClass().getResource("HomeprojetsAdmin.fxml"));
                             Parent root = loader.load();
                             HomeProjetAdmincontroller adminController = loader.getController();
-                            adminController.setLoggedInUserId(userid);
-                            adminController.setUser(userid, username, true);
+                            Session.getInstance().login(userid, username, true);
+//                            adminController.setLoggedInUserId(userid);
+//                            adminController.setUser(userid, username, true);
 
                             Scene scene = new Scene(root);
                             Stage stage = (Stage) usernameField.getScene().getWindow();
@@ -74,6 +78,7 @@ public class CommonController {
                             Parent root;
                             try {
                                 root = loader.load();
+                                Session.getInstance().login(userid, username, false);
                             } catch (IOException ex) {
                                 errorMsg.setText("Impossible d'ouvrir la vue utilisateur");
                                 ex.printStackTrace();
@@ -81,7 +86,7 @@ public class CommonController {
                             }
 
                             HomeUserTacheController userController = loader.getController();
-                            userController.setUser(userid, username);
+                            userController.setUser(username);
 
                             Scene scene = new Scene(root);
                             Stage stage = (Stage) usernameField.getScene().getWindow();
@@ -100,5 +105,12 @@ public class CommonController {
             errorMsg.setText("Erreur de base de données");
             e.printStackTrace();
         }
+    }
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erreur");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 }

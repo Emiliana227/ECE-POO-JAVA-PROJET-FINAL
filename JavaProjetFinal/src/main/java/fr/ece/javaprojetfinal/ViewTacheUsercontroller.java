@@ -86,7 +86,10 @@ public class ViewTacheUsercontroller extends BaseController{
             descriptionArea.setEditable(false);
         });
     }
-
+    @Override
+    protected boolean checkPagePermissions() {
+        return getSession().isUser();
+    }
     public void closeWindow(ActionEvent actionEvent) {
         javafx.scene.Node source = (javafx.scene.Node) actionEvent.getSource();
         javafx.stage.Window window = source.getScene().getWindow();

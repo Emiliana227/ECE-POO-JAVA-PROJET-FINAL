@@ -48,6 +48,7 @@ public class HomeUserTacheController extends BaseController {
     @FXML private Label projetnamespot4;
     @FXML private Label taskspot4;
     @FXML private Label datespot4;
+    @FXML private Label usernameSpot;
 
     private final ObservableList<Tache> tasks = FXCollections.observableArrayList();
 
@@ -119,7 +120,10 @@ public class HomeUserTacheController extends BaseController {
 
         loadTasksForUser();
     }
+    public void setUser (String username){
 
+        usernameSpot.setText(username);
+    }
     @Override
     protected boolean checkPagePermissions() {
         return !getSession().isAdmin();

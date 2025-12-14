@@ -105,4 +105,11 @@ public class ModifierUsercontroller extends BaseController {
         }
         if (s != null) s.close();
     }
+    private void showError(String message) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("Erreur");
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 }
