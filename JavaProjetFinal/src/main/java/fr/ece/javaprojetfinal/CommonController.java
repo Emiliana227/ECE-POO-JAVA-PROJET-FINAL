@@ -60,10 +60,10 @@ public class CommonController {
                         errorMsg.setText("Login successful");
                         int userid = rs.getInt("ID");
                         if (storedRole == 1) {
+                            Session.getInstance().login(userid, username, true);
                             FXMLLoader loader = new FXMLLoader(getClass().getResource("HomeprojetsAdmin.fxml"));
                             Parent root = loader.load();
                             HomeProjetAdmincontroller adminController = loader.getController();
-                            Session.getInstance().login(userid, username, true);
 //                            adminController.setLoggedInUserId(userid);
 //                            adminController.setUser(userid, username, true);
 
